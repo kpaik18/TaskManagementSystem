@@ -13,11 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @Transactional
@@ -26,22 +22,35 @@ public class ApplicationUserService implements UserDetailsService {
 
     private final ApplicationUserRepository applicationUserRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        ApplicationUser user = applicationUserRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("not found");
-        }
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+    public Optional<ApplicationUser> getUserByUsername(String username) {
+        return applicationUserRepository.findByUsername(username);
+    }
+
+    public Set<Role> getAllRolesForUser(ApplicationUser user) {
+        Set<Role> combinedRoles = new HashSet<>();
 
         List<Role> userRoles = user.getRoles();
         List<RoleGroup> userRoleGroups = user.getRoleGroups();
 
-        Set<Role> combinedRoles = userRoles.stream().collect(Collectors.toSet());
+        combinedRoles.addAll(userRoles);
+
         for (RoleGroup roleGroup : userRoleGroups) {
             combinedRoles.addAll(roleGroup.getRoles());
         }
-        combinedRoles.stream()
+        return combinedRoles;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<ApplicationUser> userOptional = applicationUserRepository.findByUsername(username);
+        if (username.isEmpty()) {
+            throw new UsernameNotFoundException("username not found");
+        }
+        ApplicationUser user = userOptional.get();
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        Set<Role> userRoles = getAllRolesForUser(user);
+        userRoles.stream()
                 .forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
 
         return new User(user.getUsername(), user.getPassword(), authorities);

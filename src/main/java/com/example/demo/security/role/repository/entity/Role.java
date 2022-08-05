@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity(name = "sec_role")
 @Data
@@ -13,6 +12,11 @@ import javax.persistence.Id;
 @AllArgsConstructor
 public class Role {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_generator")
+    @SequenceGenerator(name = "role_generator",
+            sequenceName = "seq_sec_role",
+            allocationSize = 1,
+            initialValue = 1000)
     private Long id;
     private String name;
 }

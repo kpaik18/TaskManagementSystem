@@ -15,12 +15,17 @@ import java.util.List;
 @AllArgsConstructor
 public class RoleGroup {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_group_generator")
+    @SequenceGenerator(name = "role_group_generator",
+            sequenceName = "seq_sec_role_group",
+            allocationSize = 1,
+            initialValue = 1000)
     private Long id;
 
     @Column(name = "role_group_name")
     private String roleGroupName;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "sec_role_group_sec_role",
             joinColumns = @JoinColumn(name = "sec_role_group_id"),

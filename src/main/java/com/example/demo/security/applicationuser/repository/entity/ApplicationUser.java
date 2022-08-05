@@ -16,9 +16,17 @@ import java.util.List;
 @AllArgsConstructor
 public class ApplicationUser {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "application_user_generator")
+    @SequenceGenerator(name = "application_user_generator",
+            sequenceName = "seq_sec_user",
+            allocationSize = 1,
+            initialValue = 1000)
     private Long id;
+
     private String username;
+
     private String password;
+
     @Column(name = "is_password_reset")
     private Boolean isPasswordReset;
     @ManyToMany

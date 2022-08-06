@@ -18,15 +18,35 @@ import java.util.List;
 public class ApplicationUserResource {
     private final ApplicationUserService applicationUserService;
 
+    @GetMapping
+    @RolesAllowed("sec_user_read")
+    public List<ApplicationUserDTO> getApplicationUsers() {
+        return applicationUserService.getAllApplicationUsers();
+    }
+
     @PostMapping
     @RolesAllowed("sec_usec_create")
     public ApplicationUserWithPassword registerApplicationUser(@RequestBody ApplicationUser user) {
         return applicationUserService.registerApplicationUser(user);
     }
 
-    @GetMapping
-    public List<ApplicationUserDTO> getApplicationUsers() {
-        return applicationUserService.getAllApplicationUsers();
+    @PutMapping("{id}")
+    @RolesAllowed("sec_user_update")
+    public void updateApplicationUser(@PathVariable("id") Long id,
+                                      @RequestBody ApplicationUser user) {
+        applicationUserService.updateApplicationUser(id, user);
+    }
+
+    @DeleteMapping("{id}")
+    @RolesAllowed("sec_user_delete")
+    public void deleteApplicationUser(@PathVariable("id") Long id){
+        applicationUserService.deleteApplicationUser(id);
+    }
+
+    @PatchMapping("{id}/passwordreset")
+    @RolesAllowed("sec_user_update")
+    public ApplicationUserWithPassword resetApplicationUserPassword(@PathVariable("id") Long id) {
+        return applicationUserService.resetUserPassword(id);
     }
 
     @GetMapping("roles")

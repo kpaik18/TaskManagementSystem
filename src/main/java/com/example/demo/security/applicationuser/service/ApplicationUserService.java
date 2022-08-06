@@ -40,6 +40,14 @@ public class ApplicationUserService implements UserDetailsService {
         return applicationUserRepository.findByUsername(username);
     }
 
+    private ApplicationUser lookupUser(Long id){
+        Optional<ApplicationUser> applicationUserOptional = applicationUserRepository.findById(id);
+        if(applicationUserOptional.isEmpty()){
+            throw new RuntimeException("user does not exist");
+        }
+        return applicationUserOptional.get();
+    }
+
     public Set<Role> getAllRolesForUser(ApplicationUser user) {
         Set<Role> combinedRoles = new HashSet<>();
 
@@ -88,8 +96,8 @@ public class ApplicationUserService implements UserDetailsService {
 
     public ApplicationUserWithPassword registerApplicationUser(ApplicationUser user) {
         user.setIsPasswordReset(true);
-        String randomPasswordForUser = PasswordGenerator.generatePassword(16);
-        user.setPassword(bCryptPasswordEncoder.encode(randomPasswordForUser));
+        String randomPassword = PasswordGenerator.generatePassword(16);
+        user.setPassword(bCryptPasswordEncoder.encode(randomPassword));
         try {
             applicationUserRepository.saveAndFlush(user);
         }catch (DataIntegrityViolationException ex){
@@ -98,8 +106,32 @@ public class ApplicationUserService implements UserDetailsService {
             }
             throw new RuntimeException("persistence exception");
         }
-        return new ApplicationUserWithPassword(user.getId(), user.getUsername(), randomPasswordForUser);
+        return new ApplicationUserWithPassword(user.getId(), user.getUsername(), randomPassword);
 
     }
 
+    public void updateApplicationUser(Long id, ApplicationUser user) {
+        ApplicationUser dbUser = lookupUser(id);
+        dbUser.setRoles(user.getRoles());
+        dbUser.setRoleGroups(user.getRoleGroups());
+        dbUser.setUsername(user.getUsername());
+        try{
+            applicationUserRepository.saveAndFlush(dbUser);
+        }catch (DataIntegrityViolationException ex){
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    public ApplicationUserWithPassword resetUserPassword(Long id) {
+        ApplicationUser dbUser = lookupUser(id);
+        String randomPassword = PasswordGenerator.generatePassword(16);
+        dbUser.setPassword(bCryptPasswordEncoder.encode(randomPassword));
+        dbUser.setIsPasswordReset(true);
+        applicationUserRepository.save(dbUser);
+        return new ApplicationUserWithPassword(id, dbUser.getUsername(), randomPassword);
+    }
+
+    public void deleteApplicationUser(Long id) {
+        applicationUserRepository.deleteById(id);
+    }
 }

@@ -2,7 +2,6 @@ package com.example.demo.security.applicationuser.controller;
 
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserWithPassword;
-import com.example.demo.security.applicationuser.controller.dto.PasswordChangeDTO;
 import com.example.demo.security.applicationuser.repository.entity.ApplicationUser;
 import com.example.demo.security.applicationuser.repository.entity.Role;
 import com.example.demo.security.applicationuser.repository.entity.RoleGroup;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,14 +33,14 @@ public class ApplicationUserResource {
 
     @PostMapping
     @RolesAllowed("sec_user_create")
-    public ApplicationUserWithPassword registerApplicationUser(@RequestBody ApplicationUser user) {
+    public ApplicationUserWithPassword registerApplicationUser(@RequestBody @Valid ApplicationUser user) {
         return applicationUserService.registerApplicationUser(user);
     }
 
     @PutMapping("{id}")
     @RolesAllowed("sec_user_update")
     public void updateApplicationUser(@PathVariable("id") Long id,
-                                      @RequestBody ApplicationUser user) {
+                                      @RequestBody @Valid ApplicationUser user) {
         applicationUserService.updateApplicationUser(id, user);
     }
 

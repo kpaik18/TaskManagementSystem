@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -34,7 +35,7 @@ public class RoleGroupResource {
 
     @PostMapping
     @RolesAllowed("sec_role_group_create")
-    public ResponseEntity createRoleGroup(HttpServletRequest request, @RequestBody RoleGroup roleGroup) {
+    public ResponseEntity createRoleGroup(HttpServletRequest request, @RequestBody @Valid RoleGroup roleGroup) {
         RoleGroup createdRoleGroup = roleGroupService.createRoleGroup(roleGroup);
         try {
             return ResponseEntity.created(new URI(request.getRequestURL().append("/").append(createdRoleGroup.getId().toString()).toString()))
@@ -47,7 +48,7 @@ public class RoleGroupResource {
     @PutMapping("{id}")
     @RolesAllowed("sec_role_group_update")
     public void updateRoleGroup(@PathVariable("id") Long id,
-                                @RequestBody RoleGroup roleGroup) {
+                                @RequestBody @Valid RoleGroup roleGroup) {
         roleGroupService.updateRoleGroup(id, roleGroup);
     }
 

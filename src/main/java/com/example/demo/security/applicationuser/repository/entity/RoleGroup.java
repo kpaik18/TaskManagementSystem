@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class RoleGroup {
     private Long id;
 
     @Column(name = "role_group_name")
+    @NotNull
     private String roleGroupName;
 
     @ManyToMany(fetch = FetchType.EAGER)

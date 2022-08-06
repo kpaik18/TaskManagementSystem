@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class  ApplicationUser {
+public class ApplicationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "application_user_generator")
     @SequenceGenerator(name = "application_user_generator",
@@ -21,6 +22,7 @@ public class  ApplicationUser {
             initialValue = 1000)
     private Long id;
 
+    @NotNull
     private String username;
 
     private String password;

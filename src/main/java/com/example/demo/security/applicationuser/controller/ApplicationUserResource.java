@@ -24,6 +24,12 @@ public class ApplicationUserResource {
         return applicationUserService.getAllApplicationUsers();
     }
 
+    @GetMapping("{id}")
+    @RolesAllowed("sec_user_read")
+    public ApplicationUserDTO getApplicationUser(@PathVariable("id") Long id){
+        return applicationUserService.getApplicationUser(id);
+    }
+
     @PostMapping
     @RolesAllowed("sec_usec_create")
     public ApplicationUserWithPassword registerApplicationUser(@RequestBody ApplicationUser user) {

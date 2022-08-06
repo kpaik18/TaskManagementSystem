@@ -134,4 +134,13 @@ public class ApplicationUserService implements UserDetailsService {
     public void deleteApplicationUser(Long id) {
         applicationUserRepository.deleteById(id);
     }
+
+    public ApplicationUserDTO getApplicationUser(Long id) {
+        ApplicationUser dbUser = lookupUser(id);
+        return new ApplicationUserDTO(dbUser.getId(),
+                dbUser.getUsername(),
+                dbUser.getIsPasswordReset(),
+                dbUser.getRoles(),
+                dbUser.getRoleGroups());
+    }
 }

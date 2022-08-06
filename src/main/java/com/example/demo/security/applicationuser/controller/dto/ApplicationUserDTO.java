@@ -17,7 +17,6 @@ public class ApplicationUserDTO {
     @NotNull
     private Long id;
     private String username;
-    private Boolean isPasswordReset;
     private List<Role> roles;
     private List<RoleGroup> roleGroups;
 

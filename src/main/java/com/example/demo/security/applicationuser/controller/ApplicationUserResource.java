@@ -50,12 +50,6 @@ public class ApplicationUserResource {
         applicationUserService.deleteApplicationUser(id);
     }
 
-    @PatchMapping("{id}/passwordreset")
-    @RolesAllowed("sec_user_update")
-    public ApplicationUserWithPassword resetApplicationUserPassword(@PathVariable("id") Long id) {
-        return applicationUserService.resetUserPassword(id);
-    }
-
     @GetMapping("roles")
     @RolesAllowed("sec_user_read")
     public List<Role> getRoles() {
@@ -68,9 +62,5 @@ public class ApplicationUserResource {
         return applicationUserService.getAllRoleGroups();
     }
 
-    @PatchMapping("passwordchange")
-    public void changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO) {
-        applicationUserService.changePassword(passwordChangeDTO);
-    }
 }
 

@@ -91,13 +91,11 @@ public class ApplicationUserService implements UserDetailsService {
     public List<ApplicationUserDTO> getAllApplicationUsers() {
         return applicationUserRepository.findAll().stream().map(u -> new ApplicationUserDTO(u.getId(),
                 u.getUsername(),
-                u.getIsPasswordReset(),
                 u.getRoles(),
                 u.getRoleGroups())).collect(Collectors.toList());
     }
 
     public ApplicationUserWithPassword registerApplicationUser(ApplicationUser user) {
-        user.setIsPasswordReset(true);
         String randomPassword = PasswordGenerator.generatePassword(16);
         String encodedPassword = bCryptPasswordEncoder.encode(randomPassword);
         user.setPassword(encodedPassword);
@@ -125,15 +123,6 @@ public class ApplicationUserService implements UserDetailsService {
         }
     }
 
-    public ApplicationUserWithPassword resetUserPassword(Long id) {
-        ApplicationUser dbUser = lookupUser(id);
-        String randomPassword = PasswordGenerator.generatePassword(16);
-        dbUser.setPassword(bCryptPasswordEncoder.encode(randomPassword));
-        dbUser.setIsPasswordReset(true);
-        applicationUserRepository.save(dbUser);
-        return new ApplicationUserWithPassword(id, dbUser.getUsername(), randomPassword);
-    }
-
     public void deleteApplicationUser(Long id) {
         applicationUserRepository.deleteById(id);
     }
@@ -142,22 +131,8 @@ public class ApplicationUserService implements UserDetailsService {
         ApplicationUser dbUser = lookupUser(id);
         return new ApplicationUserDTO(dbUser.getId(),
                 dbUser.getUsername(),
-                dbUser.getIsPasswordReset(),
                 dbUser.getRoles(),
                 dbUser.getRoleGroups());
     }
 
-    public void changePassword(PasswordChangeDTO passwordChangeDTO) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<ApplicationUser> dbUserOptional = applicationUserRepository.findByUsername(username);
-        if(dbUserOptional.isEmpty()){
-            throw new RuntimeException("not valid user");
-        }
-        ApplicationUser dbUser = dbUserOptional.get();
-        String encryptedOldPassword = bCryptPasswordEncoder.encode(passwordChangeDTO.getOldPassword());
-        if(!encryptedOldPassword.equals(dbUser.getPassword())){
-            throw new RuntimeException("old password is not right");
-        }
-        dbUser.setPassword(bCryptPasswordEncoder.encode(passwordChangeDTO.getNewPassword()));
-    }
 }

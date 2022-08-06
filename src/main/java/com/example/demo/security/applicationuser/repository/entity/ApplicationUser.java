@@ -25,8 +25,6 @@ public class  ApplicationUser {
 
     private String password;
 
-    @Column(name = "is_password_reset")
-    private Boolean isPasswordReset;
     @ManyToMany
     @JoinTable(
             name = "sec_user_sec_role",

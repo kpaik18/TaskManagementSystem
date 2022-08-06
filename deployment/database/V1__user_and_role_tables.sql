@@ -4,16 +4,14 @@ create sequence seq_sec_user
 create table sec_user(
                          id bigint primary key,
                          username varchar(255) not null,
-                         password varchar(300) not null,
-                         is_password_reset boolean not null
+                         password varchar(300) not null
 );
 
-insert into sec_user(id, username, password, is_password_reset)
+insert into sec_user(id, username, password)
 values
 (1,
  'admin',
- '$2a$12$fUKIkR4R9l57FhzNESwciuaKPYo8hIWxd48xENvHofITgbvlE0.H6',
- false);
+ '$2a$12$fUKIkR4R9l57FhzNESwciuaKPYo8hIWxd48xENvHofITgbvlE0.H6');
 
 create sequence seq_sec_role start with 1000;
 

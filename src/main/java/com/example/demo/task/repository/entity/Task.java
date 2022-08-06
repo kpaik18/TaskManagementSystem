@@ -13,7 +13,7 @@ import java.util.List;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_generator")
-    @SequenceGenerator(name = "task_generator", allocationSize = 1, initialValue = 1000)
+    @SequenceGenerator(name = "task_generator", sequenceName = "seq_task", allocationSize = 1, initialValue = 1000)
     private Long id;
 
     private String name;
@@ -24,6 +24,6 @@ public class Task {
     @JoinColumn(name = "sec_user_id")
     private ApplicationUser applicationUser;
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
     private List<AttachedFile> attachedFiles;
 }

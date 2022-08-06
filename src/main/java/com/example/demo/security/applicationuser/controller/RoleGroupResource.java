@@ -28,7 +28,7 @@ public class RoleGroupResource {
 
     @GetMapping("{id}")
     @RolesAllowed("sec_role_group_read")
-    public RoleGroup getRoleGroup(@PathVariable("id") Long id){
+    public RoleGroup getRoleGroup(@PathVariable("id") Long id) {
         return roleGroupService.getRoleGroup(id);
     }
 
@@ -47,13 +47,13 @@ public class RoleGroupResource {
     @PutMapping("{id}")
     @RolesAllowed("sec_role_group_update")
     public void updateRoleGroup(@PathVariable("id") Long id,
-                                @RequestBody RoleGroup roleGroup){
+                                @RequestBody RoleGroup roleGroup) {
         roleGroupService.updateRoleGroup(id, roleGroup);
     }
 
     @DeleteMapping("{id}")
     @RolesAllowed("sec_role_group_delete")
-    public void deleteRoleGroup(@PathVariable("id") Long id){
+    public void deleteRoleGroup(@PathVariable("id") Long id) {
         roleGroupService.deleteRoleGroup(id);
     }
 }

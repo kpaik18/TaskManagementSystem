@@ -42,7 +42,7 @@ public class ApplicationUserService implements UserDetailsService {
         return applicationUserRepository.findByUsername(username);
     }
 
-    private ApplicationUser lookupUser(Long id){
+    public ApplicationUser lookupUser(Long id){
         Optional<ApplicationUser> applicationUserOptional = applicationUserRepository.findById(id);
         if(applicationUserOptional.isEmpty()){
             throw new RuntimeException("user does not exist");

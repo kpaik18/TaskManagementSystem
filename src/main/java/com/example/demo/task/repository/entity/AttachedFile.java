@@ -5,13 +5,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "attached_file")
 @Data
 @NoArgsConstructor
 public class AttachedFile {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attached_file_generator")
-    @SequenceGenerator(name = "attached_file_generator", allocationSize = 1, initialValue = 1000)
+    @SequenceGenerator(name = "attached_file_generator", sequenceName = "seq_attached_file", allocationSize = 1, initialValue = 1000)
     private Long id;
 
     private String name;

@@ -1,5 +1,6 @@
 package com.example.demo.security.applicationuser.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class ApplicationUser {
     @NotNull
     private String username;
 
+    @JsonIgnore
     private String password;
 
     @ManyToMany

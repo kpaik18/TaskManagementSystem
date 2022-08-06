@@ -3,6 +3,7 @@ package com.example.demo.task.service;
 import com.example.demo.task.controller.dto.AttachedFileDTO;
 import com.example.demo.task.repository.AttachedFileRepository;
 import com.example.demo.task.repository.entity.AttachedFile;
+import com.example.demo.task.repository.entity.Task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,23 +26,23 @@ public class AttachedFileService {
             "C:{}Users{}Surface{}Desktop{}Meama{}Files".replace("{}", File.separator);
     private final AttachedFileRepository attachedFileRepository;
 
-    public List<AttachedFile> saveAttachedFiles(List<AttachedFileDTO> files) {
+    public List<AttachedFile> saveAttachedFiles(List<AttachedFileDTO> files, Task task) {
         List<AttachedFile> savedFiles = new ArrayList<>();
         for (AttachedFileDTO attachedFileDTO : files) {
-            savedFiles.add(saveAttachedFile(attachedFileDTO));
+            savedFiles.add(saveAttachedFile(attachedFileDTO, task));
         }
         return savedFiles;
     }
 
-    public AttachedFile saveAttachedFile(AttachedFileDTO attachedFileDTO) {
+    public AttachedFile saveAttachedFile(AttachedFileDTO attachedFileDTO, Task task) {
         MultipartFile file = attachedFileDTO.getFile();
 
         AttachedFile attachedFile = new AttachedFile();
         attachedFile.setContentType(file.getContentType());
         attachedFile.setName(attachedFileDTO.getName());
-        attachedFile.setTask(attachedFileDTO.getTask());
+        attachedFile.setTask(task);
         attachedFile.setFolderPath(FOLDER_PATH);
-        attachedFileRepository.save(attachedFile);
+        attachedFileRepository.saveAndFlush(attachedFile);
 
         Path taskFolder = Paths.get(FOLDER_PATH);
         Path attachedFilePath = taskFolder.resolve(attachedFile.getId().toString());

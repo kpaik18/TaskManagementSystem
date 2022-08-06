@@ -1,5 +1,7 @@
 package com.example.demo.task.controller;
 
+import com.example.demo.beanvalidation.CreateValidation;
+import com.example.demo.task.controller.dto.AttachedFileDTO;
 import com.example.demo.task.controller.dto.AttachedFileList;
 import com.example.demo.task.controller.dto.TaskDTO;
 import com.example.demo.task.repository.entity.Task;
@@ -7,6 +9,7 @@ import com.example.demo.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -32,7 +35,7 @@ public class TaskResource {
     @PostMapping
     @RolesAllowed("task_create")
     public ResponseEntity createTask(HttpServletRequest request,
-                                     @RequestPart(required = false) AttachedFileList attachedFileList,
+                                     @Validated(CreateValidation.class) AttachedFileList attachedFileList,
                                      @RequestPart @Valid TaskDTO taskDTO) {
         Task task = taskService.createTask(taskDTO, attachedFileList);
         try {
@@ -55,4 +58,12 @@ public class TaskResource {
     public void deleteTask(@PathVariable("id") Long id) {
         taskService.deleteTask(id);
     }
+
+
+    @GetMapping("{id}/files")
+    @RolesAllowed("task_read")
+    public List<AttachedFileDTO> getTaskFiles(@PathVariable("id") Long id) {
+        return taskService.getTaskAttachedFiles(id);
+    }
+
 }

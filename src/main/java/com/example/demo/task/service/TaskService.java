@@ -3,6 +3,7 @@ package com.example.demo.task.service;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
 import com.example.demo.security.applicationuser.repository.entity.ApplicationUser;
 import com.example.demo.security.applicationuser.service.ApplicationUserService;
+import com.example.demo.task.controller.dto.AttachedFileDTO;
 import com.example.demo.task.controller.dto.AttachedFileList;
 import com.example.demo.task.controller.dto.TaskDTO;
 import com.example.demo.task.repository.TaskRepository;
@@ -38,9 +39,9 @@ public class TaskService {
         task.setApplicationUser(applicationUser);
         task.setDescription(taskDTO.getDescription());
         task.setName(taskDTO.getName());
-        taskRepository.save(task);
+        taskRepository.saveAndFlush(task);
         if (attachedFileList != null) {
-            List<AttachedFile> attachedFiles = attachedFileService.saveAttachedFiles(attachedFileList.getAttachedFiles());
+            List<AttachedFile> attachedFiles = attachedFileService.saveAttachedFiles(attachedFileList.getAttachedFiles(), task);
             task.setAttachedFiles(attachedFiles);
         }
         return task;
@@ -65,5 +66,13 @@ public class TaskService {
     public void deleteTask(Long id) {
         Task task = lookupTask(id);
         taskRepository.delete(task);
+    }
+
+    public List<AttachedFileDTO> getTaskAttachedFiles(Long id) {
+        Task task = lookupTask(id);
+        List<AttachedFile> taskFiles = task.getAttachedFiles();
+        return taskFiles.stream()
+                .map(f -> new AttachedFileDTO(f.getId(), f.getName(), f.getTask()))
+                    .collect(Collectors.toList());
     }
 }

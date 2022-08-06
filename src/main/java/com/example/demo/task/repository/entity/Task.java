@@ -1,6 +1,7 @@
 package com.example.demo.task.repository.entity;
 
 import com.example.demo.security.applicationuser.repository.entity.ApplicationUser;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,5 +26,6 @@ public class Task {
     private ApplicationUser applicationUser;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<AttachedFile> attachedFiles;
 }

@@ -1,4 +1,4 @@
-package com.example.demo.security.role.repository.entity;
+package com.example.demo.security.applicationuser.repository.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

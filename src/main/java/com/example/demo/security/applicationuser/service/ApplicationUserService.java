@@ -1,9 +1,11 @@
 package com.example.demo.security.applicationuser.service;
 
 import com.example.demo.security.applicationuser.repository.ApplicationUserRepository;
+import com.example.demo.security.applicationuser.repository.RoleGroupRepository;
+import com.example.demo.security.applicationuser.repository.RoleRepository;
 import com.example.demo.security.applicationuser.repository.entity.ApplicationUser;
-import com.example.demo.security.role.repository.entity.Role;
-import com.example.demo.security.rolegroup.repository.entity.RoleGroup;
+import com.example.demo.security.applicationuser.repository.entity.Role;
+import com.example.demo.security.applicationuser.repository.entity.RoleGroup;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -21,6 +23,8 @@ import java.util.*;
 public class ApplicationUserService implements UserDetailsService {
 
     private final ApplicationUserRepository applicationUserRepository;
+    private final RoleRepository roleRepository;
+    private final RoleGroupRepository roleGroupRepository;
 
     public Optional<ApplicationUser> getUserByUsername(String username) {
         return applicationUserRepository.findByUsername(username);
@@ -54,5 +58,13 @@ public class ApplicationUserService implements UserDetailsService {
                 .forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
 
         return new User(user.getUsername(), user.getPassword(), authorities);
+    }
+
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
+    }
+
+    public List<RoleGroup> getAllRoleGroups() {
+        return roleGroupRepository.findAll();
     }
 }

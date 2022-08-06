@@ -1,7 +1,5 @@
 package com.example.demo.security.applicationuser.repository.entity;
 
-import com.example.demo.security.role.repository.entity.Role;
-import com.example.demo.security.rolegroup.repository.entity.RoleGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -22,11 +22,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final TokenUtil tokenUtil;
 
-    public AuthenticationTokenFilter(AuthenticationManager authenticationManager, TokenUtil tokenUtil) {
+    public AuthenticationTokenFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-        this.tokenUtil = tokenUtil;
     }
 
     @Override
@@ -40,9 +38,9 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-        String access_token = tokenUtil.createAccessToken(user, algorithm, request);
-        String refresh_token = tokenUtil.createRefreshToken(user.getUsername(), algorithm, request);
+        Algorithm algorithm = TokenUtil.getJwtAlgorithm();
+        String access_token = TokenUtil.createAccessToken(user, algorithm, request);
+        String refresh_token = TokenUtil.createRefreshToken(user.getUsername(), algorithm, request);
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", access_token);
         tokens.put("refresh_token", refresh_token);

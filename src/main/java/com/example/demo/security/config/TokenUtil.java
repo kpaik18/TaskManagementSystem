@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class TokenUtil {
 
-    private static long ACCESS_TOKEN_EXPIRE_TIME_MILLIS = 10 * 60 * 1000;
+    private static long ACCESS_TOKEN_EXPIRE_TIME_MILLIS = 60 * 60 * 1000;
     private static long REFRESH_TOKEN_EXPIRE_TIME_MILLIS = 60 * 60 * 1000;
     private static String algorithmSecret = "secret";
 

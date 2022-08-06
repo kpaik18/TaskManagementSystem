@@ -2,6 +2,7 @@ package com.example.demo.security.applicationuser.controller;
 
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserWithPassword;
+import com.example.demo.security.applicationuser.controller.dto.PasswordChangeDTO;
 import com.example.demo.security.applicationuser.repository.entity.ApplicationUser;
 import com.example.demo.security.applicationuser.repository.entity.Role;
 import com.example.demo.security.applicationuser.repository.entity.RoleGroup;
@@ -26,12 +27,12 @@ public class ApplicationUserResource {
 
     @GetMapping("{id}")
     @RolesAllowed("sec_user_read")
-    public ApplicationUserDTO getApplicationUser(@PathVariable("id") Long id){
+    public ApplicationUserDTO getApplicationUser(@PathVariable("id") Long id) {
         return applicationUserService.getApplicationUser(id);
     }
 
     @PostMapping
-    @RolesAllowed("sec_usec_create")
+    @RolesAllowed("sec_user_create")
     public ApplicationUserWithPassword registerApplicationUser(@RequestBody ApplicationUser user) {
         return applicationUserService.registerApplicationUser(user);
     }
@@ -45,7 +46,7 @@ public class ApplicationUserResource {
 
     @DeleteMapping("{id}")
     @RolesAllowed("sec_user_delete")
-    public void deleteApplicationUser(@PathVariable("id") Long id){
+    public void deleteApplicationUser(@PathVariable("id") Long id) {
         applicationUserService.deleteApplicationUser(id);
     }
 
@@ -65,6 +66,11 @@ public class ApplicationUserResource {
     @RolesAllowed("sec_user_read")
     public List<RoleGroup> getRoleGroups() {
         return applicationUserService.getAllRoleGroups();
+    }
+
+    @PatchMapping("passwordchange")
+    public void changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO) {
+        applicationUserService.changePassword(passwordChangeDTO);
     }
 }
 

@@ -2,6 +2,7 @@ package com.example.demo.security.applicationuser.service;
 
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserWithPassword;
+import com.example.demo.security.applicationuser.controller.dto.PasswordChangeDTO;
 import com.example.demo.security.applicationuser.repository.ApplicationUserRepository;
 import com.example.demo.security.applicationuser.repository.RoleGroupRepository;
 import com.example.demo.security.applicationuser.repository.RoleRepository;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -97,7 +99,8 @@ public class ApplicationUserService implements UserDetailsService {
     public ApplicationUserWithPassword registerApplicationUser(ApplicationUser user) {
         user.setIsPasswordReset(true);
         String randomPassword = PasswordGenerator.generatePassword(16);
-        user.setPassword(bCryptPasswordEncoder.encode(randomPassword));
+        String encodedPassword = bCryptPasswordEncoder.encode(randomPassword);
+        user.setPassword(encodedPassword);
         try {
             applicationUserRepository.saveAndFlush(user);
         }catch (DataIntegrityViolationException ex){
@@ -142,5 +145,19 @@ public class ApplicationUserService implements UserDetailsService {
                 dbUser.getIsPasswordReset(),
                 dbUser.getRoles(),
                 dbUser.getRoleGroups());
+    }
+
+    public void changePassword(PasswordChangeDTO passwordChangeDTO) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<ApplicationUser> dbUserOptional = applicationUserRepository.findByUsername(username);
+        if(dbUserOptional.isEmpty()){
+            throw new RuntimeException("not valid user");
+        }
+        ApplicationUser dbUser = dbUserOptional.get();
+        String encryptedOldPassword = bCryptPasswordEncoder.encode(passwordChangeDTO.getOldPassword());
+        if(!encryptedOldPassword.equals(dbUser.getPassword())){
+            throw new RuntimeException("old password is not right");
+        }
+        dbUser.setPassword(bCryptPasswordEncoder.encode(passwordChangeDTO.getNewPassword()));
     }
 }

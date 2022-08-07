@@ -11,18 +11,17 @@ import com.example.demo.task.controller.dto.TaskDTO;
 import com.example.demo.task.repository.entity.Task;
 import com.example.demo.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -81,14 +80,14 @@ public class TaskResource {
 
     @GetMapping("users")
     @RolesAllowed("task_read")
-    public List<ApplicationUserDTO> getUsers(){
+    public List<ApplicationUserDTO> getUsers() {
         return applicationUserService.getAllApplicationUserDTOs();
     }
 
     @GetMapping("filedownload")
     @RolesAllowed("task_read")
     public ResponseEntity exportFile(@RequestParam("attachedFileId") Long attachedFileId,
-                                           HttpServletResponse response) throws IOException {
+                                     HttpServletResponse response) throws IOException {
 
         FileDTO fileDTO = taskService.getAttachedFile(attachedFileId);
 

@@ -4,12 +4,11 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.demo.security.applicationuser.repository.entity.ApplicationUser;
 import com.example.demo.security.applicationuser.repository.entity.Role;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,11 +16,17 @@ import java.util.stream.Collectors;
 
 public class TokenUtil {
 
-    private static long ACCESS_TOKEN_EXPIRE_TIME_MILLIS = 60 * 60 * 1000;
-    private static long REFRESH_TOKEN_EXPIRE_TIME_MILLIS = 60 * 60 * 1000;
+    @Value("${access_token_time_in_minutes")
+    private static long ACCESS_TOKEN_TIME_IN_MINUTES;
+
+    @Value("${refresh_token_time_in_minutes}")
+    private static long REFRESH_TOKEN_TIME_IN_MINUTES;
+
+    private static long ACCESS_TOKEN_EXPIRE_TIME_MILLIS = ACCESS_TOKEN_TIME_IN_MINUTES * 60 * 1000;
+    private static long REFRESH_TOKEN_EXPIRE_TIME_MILLIS = REFRESH_TOKEN_TIME_IN_MINUTES * 60 * 1000;
     private static String algorithmSecret = "secret";
 
-    public static Algorithm getJwtAlgorithm(){
+    public static Algorithm getJwtAlgorithm() {
         return Algorithm.HMAC256(algorithmSecret.getBytes());
     }
 
@@ -46,9 +51,9 @@ public class TokenUtil {
     }
 
     public static String createAccessTokenWithRoles(ApplicationUser user,
-                                             Algorithm algorithm,
-                                             HttpServletRequest request,
-                                             Set<Role> rolesSet) {
+                                                    Algorithm algorithm,
+                                                    HttpServletRequest request,
+                                                    Set<Role> rolesSet) {
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME_MILLIS))

@@ -1,5 +1,6 @@
 package com.example.demo.task.service;
 
+import com.example.demo.exception.BusinessLogicException;
 import com.example.demo.task.controller.dto.AttachedFileDTO;
 import com.example.demo.task.repository.AttachedFileRepository;
 import com.example.demo.task.repository.entity.AttachedFile;
@@ -53,7 +54,7 @@ public class AttachedFileService {
         try {
             saveFile(file, attachedFilePath, taskFolder);
         } catch (IOException ex) {
-            throw new RuntimeException("can't create file");
+            throw new BusinessLogicException("can't create file");
         }
         return attachedFile;
     }
@@ -69,7 +70,7 @@ public class AttachedFileService {
                 attachedFileRepository.delete(fileAttachment);
                 attachedFileRepository.flush();
             } catch (PersistenceException | IOException ignored) {
-
+                throw new BusinessLogicException("cant delete file");
             }
         }
     }
@@ -85,7 +86,7 @@ public class AttachedFileService {
         try {
             Files.copy(file.getInputStream(), attachmentPath);
         } catch (IOException e) {
-            throw new RuntimeException("file can't be created");
+            throw new BusinessLogicException("file can't be created");
         }
     }
 }

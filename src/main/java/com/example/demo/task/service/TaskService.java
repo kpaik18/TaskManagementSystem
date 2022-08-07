@@ -1,5 +1,6 @@
 package com.example.demo.task.service;
 
+import com.example.demo.exception.BusinessLogicException;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
 import com.example.demo.security.applicationuser.repository.entity.ApplicationUser;
 import com.example.demo.security.applicationuser.service.ApplicationUserService;
@@ -51,7 +52,7 @@ public class TaskService {
     private Task lookupTask(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
         if (optionalTask.isEmpty()) {
-            throw new RuntimeException("can't find task");
+            throw new SecurityException("can't find task");
         }
         return optionalTask.get();
     }

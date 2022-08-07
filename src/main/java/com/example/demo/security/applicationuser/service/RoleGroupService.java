@@ -1,5 +1,6 @@
 package com.example.demo.security.applicationuser.service;
 
+import com.example.demo.exception.BusinessLogicException;
 import com.example.demo.security.applicationuser.repository.RoleGroupRepository;
 import com.example.demo.security.applicationuser.repository.entity.RoleGroup;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class RoleGroupService {
         try {
             roleGroup = roleGroupRepository.saveAndFlush(roleGroup);
         } catch (DataIntegrityViolationException ex) {
-            throw new RuntimeException(ex.getMessage());
+            throw new BusinessLogicException(ex.getMessage());
         }
         return roleGroup;
     }
@@ -44,7 +45,7 @@ public class RoleGroupService {
         try{
             roleGroupRepository.saveAndFlush(dbRoleGroup);
         }catch (DataIntegrityViolationException ex){
-            throw new RuntimeException(ex.getMessage());
+            throw new BusinessLogicException(ex.getMessage());
         }
     }
 

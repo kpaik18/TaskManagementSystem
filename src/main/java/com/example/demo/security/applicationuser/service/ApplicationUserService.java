@@ -1,5 +1,6 @@
 package com.example.demo.security.applicationuser.service;
 
+import com.example.demo.exception.BusinessLogicException;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserWithPassword;
 import com.example.demo.security.applicationuser.controller.dto.PasswordChangeDTO;
@@ -45,7 +46,7 @@ public class ApplicationUserService implements UserDetailsService {
     public ApplicationUser lookupUser(Long id){
         Optional<ApplicationUser> applicationUserOptional = applicationUserRepository.findById(id);
         if(applicationUserOptional.isEmpty()){
-            throw new RuntimeException("user does not exist");
+            throw new SecurityException();
         }
         return applicationUserOptional.get();
     }
@@ -103,9 +104,9 @@ public class ApplicationUserService implements UserDetailsService {
             applicationUserRepository.saveAndFlush(user);
         }catch (DataIntegrityViolationException ex){
             if(ex.getMessage().contains("uk_sec_user_username")){
-                throw new RuntimeException("username already exists");
+                throw new BusinessLogicException("username already exists");
             }
-            throw new RuntimeException("persistence exception");
+            throw new BusinessLogicException("persistence exception");
         }
         return new ApplicationUserWithPassword(user.getId(), user.getUsername(), randomPassword);
 
@@ -113,7 +114,7 @@ public class ApplicationUserService implements UserDetailsService {
 
     public void updateApplicationUser(Long id, ApplicationUser user) {
         if(id == 1){
-            throw new RuntimeException("can't update admin data");
+            throw new SecurityException();
         }
         ApplicationUser dbUser = lookupUser(id);
         dbUser.setRoles(user.getRoles());
@@ -128,7 +129,7 @@ public class ApplicationUserService implements UserDetailsService {
 
     public void deleteApplicationUser(Long id) {
         if(id == 1){
-            throw new RuntimeException("cant delete admin");
+            throw new SecurityException();
         }
         applicationUserRepository.deleteById(id);
     }
@@ -138,7 +139,7 @@ public class ApplicationUserService implements UserDetailsService {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             Optional<ApplicationUser> viewer = applicationUserRepository.findByUsername(username);
             if(viewer.isEmpty() || viewer.get().getId() != 1){
-                throw new RuntimeException("cant see admin data");
+                throw new SecurityException("cant see admin data");
             }
         }
         ApplicationUser dbUser = lookupUser(id);

@@ -112,6 +112,9 @@ public class ApplicationUserService implements UserDetailsService {
     }
 
     public void updateApplicationUser(Long id, ApplicationUser user) {
+        if(id == 1){
+            throw new RuntimeException("can't update admin data");
+        }
         ApplicationUser dbUser = lookupUser(id);
         dbUser.setRoles(user.getRoles());
         dbUser.setRoleGroups(user.getRoleGroups());
@@ -124,10 +127,20 @@ public class ApplicationUserService implements UserDetailsService {
     }
 
     public void deleteApplicationUser(Long id) {
+        if(id == 1){
+            throw new RuntimeException("cant delete admin");
+        }
         applicationUserRepository.deleteById(id);
     }
 
     public ApplicationUserDTO getApplicationUser(Long id) {
+        if(id == 1){
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            Optional<ApplicationUser> viewer = applicationUserRepository.findByUsername(username);
+            if(viewer.isEmpty() || viewer.get().getId() != 1){
+                throw new RuntimeException("cant see admin data");
+            }
+        }
         ApplicationUser dbUser = lookupUser(id);
         return new ApplicationUserDTO(dbUser.getId(),
                 dbUser.getUsername(),

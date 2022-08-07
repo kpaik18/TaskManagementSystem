@@ -1,6 +1,7 @@
 package com.example.demo.task.controller;
 
 import com.example.demo.beanvalidation.CreateValidation;
+import com.example.demo.beanvalidation.UpdateValidation;
 import com.example.demo.task.controller.dto.AttachedFileDTO;
 import com.example.demo.task.controller.dto.AttachedFileList;
 import com.example.demo.task.controller.dto.TaskDTO;
@@ -49,8 +50,9 @@ public class TaskResource {
     @PutMapping("{id}")
     @RolesAllowed("task_update")
     public void updateTask(@PathVariable("id") Long id,
-                           @RequestPart @Valid TaskDTO taskDTO) {
-        taskService.updateTask(id, taskDTO);
+                           @RequestPart @Valid TaskDTO taskDTO,
+                           @Validated(UpdateValidation.class) AttachedFileList attachedFileList) {
+        taskService.updateTask(id, taskDTO, attachedFileList);
     }
 
     @DeleteMapping("{id}")

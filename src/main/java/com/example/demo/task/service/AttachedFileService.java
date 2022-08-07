@@ -42,6 +42,7 @@ public class AttachedFileService {
         attachedFile.setName(attachedFileDTO.getName());
         attachedFile.setTask(task);
         attachedFile.setFolderPath(FOLDER_PATH);
+        attachedFile.setIsDeleted(false);
         attachedFileRepository.saveAndFlush(attachedFile);
 
         Path taskFolder = Paths.get(FOLDER_PATH);

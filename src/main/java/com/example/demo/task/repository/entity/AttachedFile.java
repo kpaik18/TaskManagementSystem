@@ -1,5 +1,6 @@
 package com.example.demo.task.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,8 @@ public class AttachedFile {
 
     @Column(name = "folder_path")
     private String folderPath;
+
+    @Column(name = "is_deleted")
+    @JsonIgnore
+    private Boolean isDeleted;
 }

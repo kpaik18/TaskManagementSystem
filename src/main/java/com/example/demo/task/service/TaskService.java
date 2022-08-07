@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,12 +56,36 @@ public class TaskService {
         return optionalTask.get();
     }
 
-    public void updateTask(Long id, TaskDTO taskDTO) {
+    public void updateTask(Long id, TaskDTO taskDTO, AttachedFileList attachedFileList) {
         Task task = lookupTask(id);
         task.setDescription(taskDTO.getDescription());
         task.setName(taskDTO.getName());
         ApplicationUser user = applicationUserService.lookupUser(taskDTO.getApplicationUserDTO().getId());
         task.setApplicationUser(user);
+
+        List<AttachedFileDTO> updateFiles = attachedFileList.getAttachedFiles();
+        List<AttachedFile> dbFiles = task.getAttachedFiles();
+
+        Map<Long, AttachedFileDTO> updateFilesMap = updateFiles.stream()
+                .filter(f -> f.getId() != null)
+                .collect(Collectors.toMap(AttachedFileDTO::getId, f -> f));
+
+        List<AttachedFile> deletedFiles = dbFiles.stream()
+                .filter(f -> !updateFilesMap.containsKey(f.getId())).collect(Collectors.toList());
+
+        dbFiles.stream().filter(f -> updateFilesMap.containsKey(f.getId()))
+                .forEach(f -> {
+                    AttachedFileDTO updateFile = updateFilesMap.get(f.getId());
+                    f.setName(updateFile.getName());
+                });
+
+        List<AttachedFileDTO> newFiles = updateFiles.stream()
+                .filter(f -> f.getId() == null).collect(Collectors.toList());
+
+        attachedFileService.saveAttachedFiles(newFiles, task);
+
+        deletedFiles.stream().forEach(f -> f.setIsDeleted(true));
+
     }
 
     public void deleteTask(Long id) {
@@ -70,7 +95,8 @@ public class TaskService {
 
     public List<AttachedFileDTO> getTaskAttachedFiles(Long id) {
         Task task = lookupTask(id);
-        List<AttachedFile> taskFiles = task.getAttachedFiles();
+        List<AttachedFile> taskFiles = task.getAttachedFiles().stream()
+                .filter(f -> !f.getIsDeleted()).collect(Collectors.toList());
         return taskFiles.stream()
                 .map(f -> new AttachedFileDTO(f.getId(), f.getName(), f.getTask()))
                     .collect(Collectors.toList());

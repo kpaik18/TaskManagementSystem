@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AttachedFileRepository extends JpaRepository<AttachedFile, Long>{
+public interface AttachedFileRepository extends JpaRepository<AttachedFile, Long> {
     List<AttachedFile> findAttachedFileByIsDeletedIsTrue();
 
     @Query(value = "select new com.example.demo.task.controller.dto.FileDTO(f.name, f.contentType, f.folderPath) " +

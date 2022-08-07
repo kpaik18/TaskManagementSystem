@@ -101,7 +101,7 @@ public class TaskService {
                 .filter(f -> !f.getIsDeleted()).collect(Collectors.toList());
         return taskFiles.stream()
                 .map(f -> new AttachedFileDTO(f.getId(), f.getName(), f.getTask()))
-                    .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     public FileDTO getAttachedFile(Long attachedFileId) throws MalformedURLException {

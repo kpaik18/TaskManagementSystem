@@ -7,7 +7,6 @@ import com.example.demo.task.repository.AttachedFileRepository;
 import com.example.demo.task.repository.entity.AttachedFile;
 import com.example.demo.task.repository.entity.Task;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,7 @@ import java.util.List;
 @Transactional
 public class AttachedFileService {
 
-    @Value("${file_write_dir}")
-    private static String FOLDER_PATH;
+    private static String FOLDER_PATH = System.getenv("file_write_dir");
     private final AttachedFileRepository attachedFileRepository;
 
     public static void deleteFile(Path attachmentPath) throws IOException {

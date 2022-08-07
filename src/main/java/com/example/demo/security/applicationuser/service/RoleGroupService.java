@@ -23,7 +23,7 @@ public class RoleGroupService {
 
     public RoleGroup lookupRoleGroup(Long id) {
         Optional<RoleGroup> roleGroupOptional = roleGroupRepository.findById(id);
-        if(roleGroupOptional.isEmpty()){
+        if (roleGroupOptional.isEmpty()) {
             throw new RuntimeException();
         }
         return roleGroupOptional.get();
@@ -42,9 +42,9 @@ public class RoleGroupService {
         RoleGroup dbRoleGroup = lookupRoleGroup(id);
         dbRoleGroup.setRoleGroupName(roleGroup.getRoleGroupName());
         dbRoleGroup.setRoles(roleGroup.getRoles());
-        try{
+        try {
             roleGroupRepository.saveAndFlush(dbRoleGroup);
-        }catch (DataIntegrityViolationException ex){
+        } catch (DataIntegrityViolationException ex) {
             throw new BusinessLogicException(ex.getMessage());
         }
     }

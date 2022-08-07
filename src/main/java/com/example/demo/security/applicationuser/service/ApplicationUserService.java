@@ -3,7 +3,6 @@ package com.example.demo.security.applicationuser.service;
 import com.example.demo.exception.BusinessLogicException;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserWithPassword;
-import com.example.demo.security.applicationuser.controller.dto.PasswordChangeDTO;
 import com.example.demo.security.applicationuser.repository.ApplicationUserRepository;
 import com.example.demo.security.applicationuser.repository.RoleGroupRepository;
 import com.example.demo.security.applicationuser.repository.RoleRepository;
@@ -12,7 +11,6 @@ import com.example.demo.security.applicationuser.repository.entity.Role;
 import com.example.demo.security.applicationuser.repository.entity.RoleGroup;
 import com.example.demo.security.applicationuser.service.util.PasswordGenerator;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,9 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
-import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,9 +39,9 @@ public class ApplicationUserService implements UserDetailsService {
         return applicationUserRepository.findByUsername(username);
     }
 
-    public ApplicationUser lookupUser(Long id){
+    public ApplicationUser lookupUser(Long id) {
         Optional<ApplicationUser> applicationUserOptional = applicationUserRepository.findById(id);
-        if(applicationUserOptional.isEmpty()){
+        if (applicationUserOptional.isEmpty()) {
             throw new SecurityException();
         }
         return applicationUserOptional.get();
@@ -102,8 +98,8 @@ public class ApplicationUserService implements UserDetailsService {
         user.setPassword(encodedPassword);
         try {
             applicationUserRepository.saveAndFlush(user);
-        }catch (DataIntegrityViolationException ex){
-            if(ex.getMessage().contains("uk_sec_user_username")){
+        } catch (DataIntegrityViolationException ex) {
+            if (ex.getMessage().contains("uk_sec_user_username")) {
                 throw new BusinessLogicException("username already exists");
             }
             throw new BusinessLogicException("persistence exception");
@@ -113,32 +109,32 @@ public class ApplicationUserService implements UserDetailsService {
     }
 
     public void updateApplicationUser(Long id, ApplicationUser user) {
-        if(id == 1){
+        if (id == 1) {
             throw new SecurityException();
         }
         ApplicationUser dbUser = lookupUser(id);
         dbUser.setRoles(user.getRoles());
         dbUser.setRoleGroups(user.getRoleGroups());
         dbUser.setUsername(user.getUsername());
-        try{
+        try {
             applicationUserRepository.saveAndFlush(dbUser);
-        }catch (DataIntegrityViolationException ex){
+        } catch (DataIntegrityViolationException ex) {
             throw new RuntimeException(ex.getMessage());
         }
     }
 
     public void deleteApplicationUser(Long id) {
-        if(id == 1){
+        if (id == 1) {
             throw new SecurityException();
         }
         applicationUserRepository.deleteById(id);
     }
 
     public ApplicationUserDTO getApplicationUser(Long id) {
-        if(id == 1){
+        if (id == 1) {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             Optional<ApplicationUser> viewer = applicationUserRepository.findByUsername(username);
-            if(viewer.isEmpty() || viewer.get().getId() != 1){
+            if (viewer.isEmpty() || viewer.get().getId() != 1) {
                 throw new SecurityException("cant see admin data");
             }
         }

@@ -8,7 +8,4 @@ public class BusinessLogicException extends RuntimeException {
         super(message);
     }
 
-    public BusinessLogicException(Throwable cause) {
-        super(cause);
-    }
 }

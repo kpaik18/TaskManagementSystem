@@ -31,10 +31,10 @@ public class AttachedFileDTO {
     }
 
     @AssertTrue(groups = UpdateValidation.class)
-    public boolean isFileValid(){
-        if(id == null){
+    public boolean isFileValid() {
+        if (id == null) {
             return file != null;
-        }else{
+        } else {
             return file == null;
         }
     }

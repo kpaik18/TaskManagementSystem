@@ -16,11 +16,9 @@ import java.util.stream.Collectors;
 
 public class TokenUtil {
 
-    @Value("${access_token_time_in_minutes")
-    private static long ACCESS_TOKEN_TIME_IN_MINUTES;
 
-    @Value("${refresh_token_time_in_minutes}")
-    private static long REFRESH_TOKEN_TIME_IN_MINUTES;
+    private static long ACCESS_TOKEN_TIME_IN_MINUTES = Long.parseLong(System.getenv("access_token_time_in_minutes"));
+    private static long REFRESH_TOKEN_TIME_IN_MINUTES = Long.parseLong(System.getenv("refresh_token_time_in_minutes"));
 
     private static long ACCESS_TOKEN_EXPIRE_TIME_MILLIS = ACCESS_TOKEN_TIME_IN_MINUTES * 60 * 1000;
     private static long REFRESH_TOKEN_EXPIRE_TIME_MILLIS = REFRESH_TOKEN_TIME_IN_MINUTES * 60 * 1000;

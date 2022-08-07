@@ -5,9 +5,12 @@ import com.example.demo.task.repository.AttachedFileRepository;
 import com.example.demo.task.repository.entity.AttachedFile;
 import com.example.demo.task.repository.entity.Task;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.SortComparator;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +56,26 @@ public class AttachedFileService {
             throw new RuntimeException("can't create file");
         }
         return attachedFile;
+    }
+
+    // every hour deletion
+    @Scheduled(cron = "0 0 * * * *")
+    public void taskDeleteJob(){
+        List<AttachedFile> toDeleteFiles = attachedFileRepository.findAttachedFileByIsDeletedIsTrue();
+
+        for (AttachedFile fileAttachment : toDeleteFiles) {
+            try {
+                deleteFile(Path.of(fileAttachment.getFolderPath() + File.separator + fileAttachment.getId()));
+                attachedFileRepository.delete(fileAttachment);
+                attachedFileRepository.flush();
+            } catch (PersistenceException | IOException ignored) {
+
+            }
+        }
+    }
+
+    public static void deleteFile(Path attachmentPath) throws IOException {
+        Files.deleteIfExists(attachmentPath);
     }
 
     private void saveFile(MultipartFile file, Path attachmentPath, Path folder) throws IOException {

@@ -2,11 +2,12 @@ package com.example.demo.task.service;
 
 import com.example.demo.exception.BusinessLogicException;
 import com.example.demo.task.controller.dto.AttachedFileDTO;
+import com.example.demo.task.controller.dto.FileDTO;
 import com.example.demo.task.repository.AttachedFileRepository;
 import com.example.demo.task.repository.entity.AttachedFile;
 import com.example.demo.task.repository.entity.Task;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.SortComparator;
+import org.springframework.core.io.UrlResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +31,10 @@ public class AttachedFileService {
     private static final String FOLDER_PATH =
             "C:{}Users{}Surface{}Desktop{}Meama{}Files".replace("{}", File.separator);
     private final AttachedFileRepository attachedFileRepository;
+
+    public static void deleteFile(Path attachmentPath) throws IOException {
+        Files.deleteIfExists(attachmentPath);
+    }
 
     public List<AttachedFile> saveAttachedFiles(List<AttachedFileDTO> files, Task task) {
         List<AttachedFile> savedFiles = new ArrayList<>();
@@ -61,7 +67,7 @@ public class AttachedFileService {
 
     // every hour deletion
     @Scheduled(cron = "0 0 * * * *")
-    public void taskDeleteJob(){
+    public void taskDeleteJob() {
         List<AttachedFile> toDeleteFiles = attachedFileRepository.findAttachedFileByIsDeletedIsTrue();
 
         for (AttachedFile fileAttachment : toDeleteFiles) {
@@ -75,10 +81,6 @@ public class AttachedFileService {
         }
     }
 
-    public static void deleteFile(Path attachmentPath) throws IOException {
-        Files.deleteIfExists(attachmentPath);
-    }
-
     private void saveFile(MultipartFile file, Path attachmentPath, Path folder) throws IOException {
         if (!Files.exists(folder)) {
             Files.createDirectories(folder);
@@ -88,5 +90,13 @@ public class AttachedFileService {
         } catch (IOException e) {
             throw new BusinessLogicException("file can't be created");
         }
+    }
+
+    public FileDTO getAttachedFile(Long attachedFileId) throws MalformedURLException {
+        FileDTO fileDTO = attachedFileRepository.getFileDTOById(attachedFileId);
+        Path folderPath = Paths.get(fileDTO.getFolderPath());
+        fileDTO.setFileResource(new UrlResource
+                (folderPath.resolve(Paths.get(attachedFileId.toString())).toUri()));
+        return fileDTO;
     }
 }

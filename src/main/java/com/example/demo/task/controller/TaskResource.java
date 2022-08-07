@@ -6,20 +6,28 @@ import com.example.demo.security.applicationuser.controller.dto.ApplicationUserD
 import com.example.demo.security.applicationuser.service.ApplicationUserService;
 import com.example.demo.task.controller.dto.AttachedFileDTO;
 import com.example.demo.task.controller.dto.AttachedFileList;
+import com.example.demo.task.controller.dto.FileDTO;
 import com.example.demo.task.controller.dto.TaskDTO;
 import com.example.demo.task.repository.entity.Task;
 import com.example.demo.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -77,4 +85,18 @@ public class TaskResource {
         return applicationUserService.getAllApplicationUserDTOs();
     }
 
+    @GetMapping("filedownload")
+    @RolesAllowed("task_read")
+    public ResponseEntity exportFile(@RequestParam("attachedFileId") Long attachedFileId,
+                                           HttpServletResponse response) throws IOException {
+
+        FileDTO fileDTO = taskService.getAttachedFile(attachedFileId);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition",
+                        "attachment; filename=\"" + URLEncoder.encode(fileDTO.getName(), StandardCharsets.UTF_8).replace("+", "%20") + "\"")
+                .contentType(MediaType.parseMediaType(fileDTO.getContentType()))
+                .body(fileDTO.getFileResource());
+
+    }
 }

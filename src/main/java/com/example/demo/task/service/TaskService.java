@@ -1,11 +1,11 @@
 package com.example.demo.task.service;
 
-import com.example.demo.exception.BusinessLogicException;
 import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
 import com.example.demo.security.applicationuser.repository.entity.ApplicationUser;
 import com.example.demo.security.applicationuser.service.ApplicationUserService;
 import com.example.demo.task.controller.dto.AttachedFileDTO;
 import com.example.demo.task.controller.dto.AttachedFileList;
+import com.example.demo.task.controller.dto.FileDTO;
 import com.example.demo.task.controller.dto.TaskDTO;
 import com.example.demo.task.repository.TaskRepository;
 import com.example.demo.task.repository.entity.AttachedFile;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,5 +102,9 @@ public class TaskService {
         return taskFiles.stream()
                 .map(f -> new AttachedFileDTO(f.getId(), f.getName(), f.getTask()))
                     .collect(Collectors.toList());
+    }
+
+    public FileDTO getAttachedFile(Long attachedFileId) throws MalformedURLException {
+        return attachedFileService.getAttachedFile(attachedFileId);
     }
 }

@@ -148,4 +148,9 @@ public class ApplicationUserService implements UserDetailsService {
                 dbUser.getRoleGroups());
     }
 
+    public List<ApplicationUserDTO> getAllApplicationUserDTOs() {
+        List<ApplicationUser> allUsers = applicationUserRepository.findAll();
+        return allUsers.stream().map(u -> new ApplicationUserDTO(u.getId(), u.getUsername()))
+                .collect(Collectors.toList());
+    }
 }

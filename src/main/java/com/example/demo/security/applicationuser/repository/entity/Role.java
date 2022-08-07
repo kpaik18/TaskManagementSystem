@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity(name = "sec_role")
 @Data
@@ -17,6 +18,7 @@ public class Role {
             sequenceName = "seq_sec_role",
             allocationSize = 1,
             initialValue = 1000)
+    @NotNull
     private Long id;
     private String name;
 }

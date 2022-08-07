@@ -2,6 +2,8 @@ package com.example.demo.task.controller;
 
 import com.example.demo.beanvalidation.CreateValidation;
 import com.example.demo.beanvalidation.UpdateValidation;
+import com.example.demo.security.applicationuser.controller.dto.ApplicationUserDTO;
+import com.example.demo.security.applicationuser.service.ApplicationUserService;
 import com.example.demo.task.controller.dto.AttachedFileDTO;
 import com.example.demo.task.controller.dto.AttachedFileList;
 import com.example.demo.task.controller.dto.TaskDTO;
@@ -26,6 +28,7 @@ import java.util.List;
 public class TaskResource {
 
     private final TaskService taskService;
+    private final ApplicationUserService applicationUserService;
 
     @GetMapping
     @RolesAllowed("task_read")
@@ -66,6 +69,12 @@ public class TaskResource {
     @RolesAllowed("task_read")
     public List<AttachedFileDTO> getTaskFiles(@PathVariable("id") Long id) {
         return taskService.getTaskAttachedFiles(id);
+    }
+
+    @GetMapping("users")
+    @RolesAllowed("task_read")
+    public List<ApplicationUserDTO> getUsers(){
+        return applicationUserService.getAllApplicationUserDTOs();
     }
 
 }

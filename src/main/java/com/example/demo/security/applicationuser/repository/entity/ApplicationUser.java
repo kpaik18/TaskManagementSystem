@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ApplicationUser {
             joinColumns = @JoinColumn(name = "sec_user_id"),
             inverseJoinColumns = @JoinColumn(name = "sec_role_id")
     )
-    private List<Role> roles = new ArrayList<>();
+    private List<@Valid Role> roles = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -43,5 +44,5 @@ public class ApplicationUser {
             joinColumns = @JoinColumn(name = "sec_user_id"),
             inverseJoinColumns = @JoinColumn(name = "sec_role_group_id")
     )
-    private List<RoleGroup> roleGroups = new ArrayList<>();
+    private List<@Valid RoleGroup> roleGroups = new ArrayList<>();
 }
